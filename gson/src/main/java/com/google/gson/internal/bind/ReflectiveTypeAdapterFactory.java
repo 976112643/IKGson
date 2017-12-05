@@ -100,7 +100,7 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
     return new Adapter<T>(constructor, getBoundFields(gson, type, raw));
   }
 
-  private ReflectiveTypeAdapterFactory.BoundField createBoundField(
+  private BoundField createBoundField(
       final Gson context, final Field field, final String name,
       final TypeToken<?> fieldType, boolean serialize, boolean deserialize) {
     final boolean isPrimitive = Primitives.isPrimitive(fieldType.getRawType());
@@ -115,7 +115,7 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
     if (mapped == null) mapped = context.getAdapter(fieldType);
 
     final TypeAdapter<?> typeAdapter = mapped;
-    return new ReflectiveTypeAdapterFactory.BoundField(name, serialize, deserialize) {
+    return new BoundField(name, serialize, deserialize) {
       @SuppressWarnings({"unchecked", "rawtypes"}) // the type adapter and field type always agree
       @Override void write(JsonWriter writer, Object value)
           throws IOException, IllegalAccessException {
@@ -221,7 +221,11 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
           }
         }
       } catch (IllegalStateException e) {
-        throw new JsonSyntaxException(e);
+        if(Gson.StrictMode) {
+          throw new JsonSyntaxException(e);
+        }
+        in.skipValue();
+        return null;
       } catch (IllegalAccessException e) {
         throw new AssertionError(e);
       }
