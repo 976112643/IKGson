@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonStrictMode;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
@@ -372,13 +373,14 @@ public final class TypeAdapters {
         return null;
       }
       String str = in.nextString();
-      if(Gson.StrictMode){
+
+      if( GsonStrictMode.isCheckTypeException()){
         if (str.length() != 1) {
           throw new JsonSyntaxException("Expecting character, got: " + str);
         }
       }
       if(str == null || str.length() == 0){
-        return '0';
+        return  GsonStrictMode.getCharVal();
       }
       return str.charAt(0);
     }

@@ -18,6 +18,7 @@ package com.google.gson.internal.bind;
 
 import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
+import com.google.gson.GsonStrictMode;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
@@ -221,11 +222,14 @@ public final class ReflectiveTypeAdapterFactory implements TypeAdapterFactory {
           }
         }
       } catch (IllegalStateException e) {
-        if(Gson.StrictMode) {
+        if(GsonStrictMode.isCheckTypeException()) {
           throw new JsonSyntaxException(e);
         }
         in.skipValue();
-        return null;
+        if(GsonStrictMode.isNullObject()) {
+          return null;
+        }
+        return instance;
       } catch (IllegalAccessException e) {
         throw new AssertionError(e);
       }

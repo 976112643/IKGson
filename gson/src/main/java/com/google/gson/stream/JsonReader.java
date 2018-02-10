@@ -17,6 +17,7 @@
 package com.google.gson.stream;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonStrictMode;
 import com.google.gson.internal.JsonReaderInternalAccess;
 import com.google.gson.internal.bind.JsonTreeReader;
 import java.io.Closeable;
@@ -230,7 +231,7 @@ public class JsonReader implements Closeable {
   /** True to accept non-spec compliant JSON */
   private boolean lenient = false;
 
-  private boolean StrictMode = Gson.StrictMode;
+//  private boolean StrictMode = Gson.StrictMode;
 
   /**
    * Use a manual buffer to easily read and unread upcoming characters, and
@@ -827,11 +828,11 @@ public class JsonReader implements Closeable {
     } else if(p == PEEKED_NULL) {
       result = null;
     } else {
-      if(StrictMode){
+      if(GsonStrictMode.isCheckTypeException()){
         throw new IllegalStateException("Expected a string but was " + peek() + locationString());
       }
       skipValue();
-      return "";
+      return GsonStrictMode.getStringVal();
     }
     peeked = PEEKED_NONE;
     pathIndices[stackSize - 1]++;
@@ -859,13 +860,13 @@ public class JsonReader implements Closeable {
       pathIndices[stackSize - 1]++;
       return false;
     }
-    if(StrictMode){
-      new IllegalStateException("Expected a boolean but was " + peek() + locationString());
+    if(GsonStrictMode.isCheckTypeException()){
+      throw new IllegalStateException("Expected a boolean but was " + peek() + locationString());
     }
     peeked = PEEKED_NONE;
     pathIndices[stackSize - 1]++;
     skipValue();
-    return false;
+    return GsonStrictMode.getBooleanVal();
   }
 
   /**
@@ -917,11 +918,11 @@ public class JsonReader implements Closeable {
     } else if (p == PEEKED_UNQUOTED) {
       peekedString = nextUnquotedValue();
     } else if (p != PEEKED_BUFFERED) {
-      if(StrictMode){
+      if(GsonStrictMode.isCheckTypeException()){
         throw new IllegalStateException("Expected a double but was " + peek() + locationString());
       }
       skipValue();
-      peekedString = "0";
+      peekedString = String.valueOf(GsonStrictMode.getDoubleVal());
     }
 
     peeked = PEEKED_BUFFERED;
@@ -929,10 +930,10 @@ public class JsonReader implements Closeable {
     try{
         result = Double.parseDouble(peekedString); // don't catch this NumberFormatException.
     }catch (NumberFormatException e){
-        if(StrictMode){
+        if(GsonStrictMode.isCheckTypeException()){
           throw e;
         }
-      result = 0;
+      result = GsonStrictMode.getDoubleVal();
     }
     if (!lenient && (Double.isNaN(result) || Double.isInfinite(result))) {
       throw new MalformedJsonException(
@@ -984,15 +985,15 @@ public class JsonReader implements Closeable {
         // Fall back to parse as a double below.
       }
     } else {
-      if(StrictMode){
+      if(GsonStrictMode.isCheckTypeException()){
         throw new IllegalStateException("Expected a long but was " + peek() + locationString());
       }
       skipValue();
-      peekedString = "0";
+      peekedString = String.valueOf(GsonStrictMode.getLongVal());
     }
 
     peeked = PEEKED_BUFFERED;
-    long result = 0;
+    long result = GsonStrictMode.getLongVal();
     try{
       double asDouble = Double.parseDouble(peekedString); // don't catch this NumberFormatException.
       result = (long) asDouble;
@@ -1000,7 +1001,7 @@ public class JsonReader implements Closeable {
         throw new NumberFormatException("Expected a long but was " + peekedString + locationString());
       }
     }catch (NumberFormatException e){
-      if(StrictMode){
+      if(GsonStrictMode.isCheckTypeException()){
         throw e;
       }
     }
@@ -1203,10 +1204,10 @@ public class JsonReader implements Closeable {
       p = doPeek();
     }
 
-    int result = 0;
+    int result = GsonStrictMode.getIntVal();
     if (p == PEEKED_LONG) {
       result = (int) peekedLong;
-      if(StrictMode){
+      if(GsonStrictMode.isCheckTypeException()){
         if (peekedLong != result) { // Make sure no precision was lost casting to 'int'.
           throw new NumberFormatException("Expected an int but was " + peekedLong + locationString());
         }
@@ -1234,11 +1235,11 @@ public class JsonReader implements Closeable {
         // Fall back to parse as a double below.
       }
     } else {
-      if(StrictMode){
+      if(GsonStrictMode.isCheckTypeException()){
         throw new IllegalStateException("Expected an int but was " + peek() + locationString());
       }
       skipValue();
-      peekedString = "0";
+      peekedString = String.valueOf(GsonStrictMode.getIntVal());
     }
 
     peeked = PEEKED_BUFFERED;
@@ -1249,7 +1250,7 @@ public class JsonReader implements Closeable {
         throw new NumberFormatException("Expected an int but was " + peekedString + locationString());
       }
     }catch (NumberFormatException e){
-      if(StrictMode){
+      if(GsonStrictMode.isCheckTypeException()){
         throw e;
       }
     }

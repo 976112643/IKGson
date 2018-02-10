@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonStrictMode;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.$Gson$Types;
@@ -36,70 +37,76 @@ import com.google.gson.stream.JsonWriter;
  * Adapt an array of objects.
  */
 public final class ArrayTypeAdapter<E> extends TypeAdapter<Object> {
-  public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Override public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
-      Type type = typeToken.getType();
-      if (!(type instanceof GenericArrayType || type instanceof Class && ((Class<?>) type).isArray())) {
-        return null;
-      }
+    public static final TypeAdapterFactory FACTORY = new TypeAdapterFactory() {
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        @Override
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> typeToken) {
+            Type type = typeToken.getType();
+            if (!(type instanceof GenericArrayType || type instanceof Class && ((Class<?>) type).isArray())) {
+                return null;
+            }
 
-      Type componentType = $Gson$Types.getArrayComponentType(type);
-      TypeAdapter<?> componentTypeAdapter = gson.getAdapter(TypeToken.get(componentType));
-      return new ArrayTypeAdapter(
-              gson, componentTypeAdapter, $Gson$Types.getRawType(componentType));
-    }
-  };
-
-  private final Class<E> componentType;
-  private final TypeAdapter<E> componentTypeAdapter;
-
-  public ArrayTypeAdapter(Gson context, TypeAdapter<E> componentTypeAdapter, Class<E> componentType) {
-    this.componentTypeAdapter =
-      new TypeAdapterRuntimeTypeWrapper<E>(context, componentTypeAdapter, componentType);
-    this.componentType = componentType;
-  }
-
-  @Override public Object read(JsonReader in) throws IOException {
-    if (in.peek() == JsonToken.NULL) {
-      in.nextNull();
-      return null;
-    }
-    List<E> list = new ArrayList<E>();
-    try{
-        in.beginArray();
-        while (in.hasNext()) {
-          E instance = componentTypeAdapter.read(in);
-          list.add(instance);
+            Type componentType = $Gson$Types.getArrayComponentType(type);
+            TypeAdapter<?> componentTypeAdapter = gson.getAdapter(TypeToken.get(componentType));
+            return new ArrayTypeAdapter(
+                    gson, componentTypeAdapter, $Gson$Types.getRawType(componentType));
         }
-        in.endArray();
-    } catch (IllegalStateException e){
-      if(Gson.StrictMode){
-        throw e;
-      }
-        in.skipValue();
+    };
+
+    private final Class<E> componentType;
+    private final TypeAdapter<E> componentTypeAdapter;
+
+    public ArrayTypeAdapter(Gson context, TypeAdapter<E> componentTypeAdapter, Class<E> componentType) {
+        this.componentTypeAdapter =
+                new TypeAdapterRuntimeTypeWrapper<E>(context, componentTypeAdapter, componentType);
+        this.componentType = componentType;
     }
 
-    int size = list.size();
-    Object array = Array.newInstance(componentType, size);
-    for (int i = 0; i < size; i++) {
-      Array.set(array, i, list.get(i));
-    }
-    return array;
-  }
+    @Override
+    public Object read(JsonReader in) throws IOException {
+        if (in.peek() == JsonToken.NULL) {
+            in.nextNull();
+            return null;
+        }
+        List<E> list = new ArrayList<E>();
+        try {
+            in.beginArray();
+            while (in.hasNext()) {
+                E instance = componentTypeAdapter.read(in);
+                list.add(instance);
+            }
+            in.endArray();
+        } catch (IllegalStateException e) {
+            if (GsonStrictMode.isCheckTypeException()) {
+                throw e;
+            }
+            in.skipValue();
+            if(GsonStrictMode.isNullArray()){
+                return null;
+            }
+        }
 
-  @SuppressWarnings("unchecked")
-  @Override public void write(JsonWriter out, Object array) throws IOException {
-    if (array == null) {
-      out.nullValue();
-      return;
+        int size = list.size();
+        Object array = Array.newInstance(componentType, size);
+        for (int i = 0; i < size; i++) {
+            Array.set(array, i, list.get(i));
+        }
+        return array;
     }
 
-    out.beginArray();
-    for (int i = 0, length = Array.getLength(array); i < length; i++) {
-      E value = (E) Array.get(array, i);
-      componentTypeAdapter.write(out, value);
+    @SuppressWarnings("unchecked")
+    @Override
+    public void write(JsonWriter out, Object array) throws IOException {
+        if (array == null) {
+            out.nullValue();
+            return;
+        }
+
+        out.beginArray();
+        for (int i = 0, length = Array.getLength(array); i < length; i++) {
+            E value = (E) Array.get(array, i);
+            componentTypeAdapter.write(out, value);
+        }
+        out.endArray();
     }
-    out.endArray();
-  }
 }

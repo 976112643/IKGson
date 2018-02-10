@@ -94,7 +94,6 @@ public final class GsonBuilder {
   private boolean prettyPrinting = DEFAULT_PRETTY_PRINT;
   private boolean generateNonExecutableJson = DEFAULT_JSON_NON_EXECUTABLE;
   private boolean lenient = DEFAULT_LENIENT;
-
   /**
    * Creates a GsonBuilder instance that can be used to build Gson with various configuration
    * settings. GsonBuilder follows the builder pattern, and it is typically used by first
@@ -115,6 +114,7 @@ public final class GsonBuilder {
     excluder = excluder.withVersion(ignoreVersionsAfter);
     return this;
   }
+
 
   /**
    * Configures Gson to excludes all class fields that have the specified modifiers. By default,
@@ -569,10 +569,11 @@ public final class GsonBuilder {
 
     addTypeAdaptersForDate(datePattern, dateStyle, timeStyle, factories);
 
-    return new Gson(excluder, fieldNamingPolicy, instanceCreators,
-        serializeNulls, complexMapKeySerialization,
-        generateNonExecutableJson, escapeHtmlChars, prettyPrinting, lenient,
-        serializeSpecialFloatingPointValues, longSerializationPolicy, factories);
+    Gson gson = new Gson(excluder, fieldNamingPolicy, instanceCreators,
+            serializeNulls, complexMapKeySerialization,
+            generateNonExecutableJson, escapeHtmlChars, prettyPrinting, lenient,
+            serializeSpecialFloatingPointValues, longSerializationPolicy, factories);
+    return gson;
   }
 
   @SuppressWarnings("unchecked")

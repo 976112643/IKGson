@@ -17,6 +17,7 @@
 package com.google.gson.internal.bind;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonStrictMode;
 import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.$Gson$Types;
@@ -61,7 +62,6 @@ public final class CollectionTypeAdapterFactory implements TypeAdapterFactory {
   private static final class Adapter<E> extends TypeAdapter<Collection<E>> {
     private final TypeAdapter<E> elementTypeAdapter;
     private final ObjectConstructor<? extends Collection<E>> constructor;
-
     public Adapter(Gson context, Type elementType,
         TypeAdapter<E> elementTypeAdapter,
         ObjectConstructor<? extends Collection<E>> constructor) {
@@ -85,10 +85,13 @@ public final class CollectionTypeAdapterFactory implements TypeAdapterFactory {
         }
         in.endArray();
       }catch (IllegalStateException e){
-        if(Gson.StrictMode){
+        if(GsonStrictMode.isCheckTypeException()){
           throw e;
         }
         in.skipValue();
+        if(GsonStrictMode.isNullArray()){
+            collection=null;
+        }
       }
       return collection;
     }

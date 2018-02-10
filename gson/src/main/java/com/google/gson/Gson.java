@@ -138,7 +138,6 @@ public final class Gson {
 
   // can open debug mode
   public static boolean StrictMode = false;
-
   /**
    * Constructs a Gson object with default configuration. The default configuration has the
    * following settings:
@@ -954,6 +953,12 @@ public final class Gson {
     }
     return (T) fromJson(new JsonTreeReader(json), typeOfT);
   }
+
+
+//  public Gson setGsonStrictMode(GsonStrictMode gsonStrictMode) {
+//    this.gsonStrictMode = gsonStrictMode;
+//    return this;
+//  }
 
   static class FutureTypeAdapter<T> extends TypeAdapter<T> {
     private TypeAdapter<T> delegate;
