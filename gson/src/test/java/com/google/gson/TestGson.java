@@ -19,15 +19,20 @@ public class TestGson {
 
     public static void main(String []args){
         Gson gson=new GsonBuilder().create();
-//        GsonStrictMode.getInstance().setCheckTypeException(true);
-        //测试json解析输出
         System.out.println(gson.fromJson(JSON_1, TestBean.class));
         System.out.println(gson.fromJson(JSON_2, TestBean.class));
         System.out.println(gson.fromJson(JSON_3, TestBean.class));
 
         //测试出错时, 的自定义默认类型值的输出情况
-        GsonStrictMode.getInstance().setBooleanVal(true).setIntVal(-110).setStringVal("类型错啦,")
-                .setNullArray(true).setNullObject(false);
+
+        GsonStrictMode.getInstance()
+                .setCheckTypeException(false)//是否检查类型异常,默认为false
+                .setBooleanVal(true)//设置各类型的默认值, 调用后默认不再检查类型
+                .setIntVal(-110)
+                .setStringVal("类型错啦,")
+                .setNullArray(true)//数组类型是否为null
+                .setNullObject(false);//对象类型是否为null
+
         System.out.println(gson.fromJson(JSON_1, TestBean.class));
         System.out.println(gson.fromJson(JSON_2, TestBean.class));
         System.out.println(gson.fromJson(JSON_3, TestBean.class));
