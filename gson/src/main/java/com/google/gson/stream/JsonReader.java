@@ -863,8 +863,7 @@ public class JsonReader implements Closeable {
     if(GsonStrictMode.isCheckTypeException()){
       throw new IllegalStateException("Expected a boolean but was " + peek() + locationString());
     }
-    peeked = PEEKED_NONE;
-    pathIndices[stackSize - 1]++;
+    //不检查异常, 跳过值,返回默认值
     skipValue();
     return GsonStrictMode.getBooleanVal();
   }

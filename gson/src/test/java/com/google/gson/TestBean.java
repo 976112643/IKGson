@@ -34,7 +34,7 @@ public class TestBean {
      */
 
     public List<LinksBean> links;
-
+    public List<LinksBean> links2;
     public static class AddressBean {
         public String street;
         public String city;
@@ -72,6 +72,7 @@ public class TestBean {
                 ", isNonProfit=" + isNonProfit +
                 ", address=" + address +
                 ", links=" + links +
+                ", links2=" + links2 +
                 '}';
     }
 }
