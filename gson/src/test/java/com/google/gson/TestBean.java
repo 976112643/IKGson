@@ -72,7 +72,7 @@ public class TestBean {
                 ", isNonProfit=" + isNonProfit +
                 ", address=" + address +
                 ", links=" + links +
-                ", links2=" + links2 +
                 '}';
     }
+
 }

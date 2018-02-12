@@ -29,6 +29,7 @@ public class TestGson {
                 .setCheckTypeException(false)//是否检查类型异常,默认为false
                 .setBooleanVal(true)//设置各类型的默认值, 调用后默认不再检查类型
                 .setIntVal(-110)
+                .setLongVal(-10L)
                 .setStringVal("类型错啦,")
                 .setNullArray(true)//数组类型是否为null
                 .setNullObject(false);//对象类型是否为null
