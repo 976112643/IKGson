@@ -1,11 +1,26 @@
-### 1. 说明
+### Gson容错扩展库 [![](https://www.jitpack.io/v/976112643/IKGson.svg)](https://www.jitpack.io/#976112643/IKGson)
 > 改造后的Gson库，对常用的数据类型进行容错处理（某一个字段由于数据类型不匹配，采用默认值处理）
 
 - 集成方式
-> 直接下载使用项目工程中IKGson.jar文件即可
+> 1. 添加jitpack仓库
+```java
+	allprojects {
+		repositories {
+			...
+			maven { url 'https://www.jitpack.io' }
+		}
+	}
+```
+
+> 2. 加入依赖
+```java
+	dependencies {
+	        compile 'com.github.976112643.IKGson:gson:1.0'
+	}
+```
 
 - 容错模式默认开启,若需要修改,可以使用如下方法配置:
-```
+```java
     GsonStrictMode.getInstance()
                  .setCheckTypeException(false)//是否检查类型异常,默认为false
                  .setBooleanVal(true)//设置各类型的默认值, 调用后默认不再检查类型
