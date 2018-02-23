@@ -1,5 +1,5 @@
 ### Gson容错扩展库 [![](https://www.jitpack.io/v/976112643/IKGson.svg)](https://www.jitpack.io/#976112643/IKGson)
-> 改造后的Gson库，对常用的数据类型进行容错处理（某一个字段由于数据类型不匹配，采用默认值处理）
+> 改造后的Gson库，对常用的数据类型进行容错处理（若某一个字段由于数据类型不匹配，采用默认值处理）
 
 - 集成方式
 > 1. 添加jitpack仓库
@@ -43,8 +43,8 @@ double | 0.0D
 chat | '\0'
 String | ""
 Boolean |false
-Array(数组) | [] 空数据，非null
-List(集合) | []  空集合，非null
+Array(数组) | [] 空数组
+List(集合) | []  空集合
 Objec(对象) | null
 
 ---
