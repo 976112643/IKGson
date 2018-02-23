@@ -1,4 +1,4 @@
-### Gson容错扩展库 [![](https://www.jitpack.io/v/976112643/IKGson.svg)](https://www.jitpack.io/#976112643/IKGson)
+### Gson容错扩展库 [![](https://www.jitpack.io/v/976112643/SafeGson.svg)](https://www.jitpack.io/#976112643/SafeGson)
 > 改造后的Gson库，对常用的数据类型进行容错处理（若某一个字段由于数据类型不匹配，采用默认值处理）
 
 - 集成方式
@@ -15,7 +15,7 @@
 > 2. 加入依赖
 ```java
 	dependencies {
-	        compile 'com.github.976112643.IKGson:gson:1.0'
+	        compile 'com.github.976112643:SafeGson:1.0'
 	}
 ```
 
